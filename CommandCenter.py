@@ -37,18 +37,6 @@ def home():
         except:
             redirect('/login')
 
-        # Ship Data
-        ship_data = getShips(1).data
-        ship_json = json.loads(ship_data.decode('utf8').replace("'", '"'))
-        ship1_count = ship_json['ship1_count']
-        ship2_count = ship_json['ship2_count']
-        ship3_count = ship_json['ship3_count']
-
-        # Credit Data
-        credit_data = getCredits(1).data
-        credit_json = json.loads(credit_data.decode('utf8').replace("'", '"'))
-        credits = credit_json['credits']
-
         # Stats Data
         stats_data = getStats(1).data
         stats_json = json.loads(stats_data.decode('utf8').replace("'", '"'))
@@ -71,9 +59,7 @@ def home():
         elif speed[0] == '-':
             speed_color = 'red'
 
-        return render_template('index.html', ship1_count=ship1_count, ship2_count=ship2_count, ship3_count=ship3_count,
-                               credits=credits, damage=damage, health=health, speed=speed, damage_color=damage_color,
-                               health_color=health_color, speed_color=speed_color)
+        return render_template('index.html')
     else:
         return render_template('login.html')
 
@@ -83,8 +69,7 @@ def login():
     password = request.form['password']
     username = request.form['username']
     data = {'username': username, 'password': password}
-    url = 'http://lilbite.org:9000/login'
-    r = requests.post(url, data)
+    r = requests.post("{}/login".format(AUTH_API_URL), data=data)
     if r.status_code != 200:
         # error
         pass
@@ -140,7 +125,7 @@ def ansible_playbook4():
 """
 @app.route("/status/alerts")
 def alerts():
-    return jsonify({'status': 200, 'alerts': ['Perk5 will be unavailable for 10 minutes', 'Alert 2']})
+    return jsonify({'status': 200, 'alerts': ['Perk5 will be unavailable for 10 minutes', 'Alert 3']})
 
 
 @app.route('/status/koth')
@@ -151,21 +136,21 @@ def koth():
 """
         Team Functions
 """
-@app.route('/credits/<teamID>')
+@app.route('/credits/<teamID>', methods=['POST'])
 def getCredits(teamID):
     if not validateteamID(teamID):
         return jsonify({'status': 404})
     return jsonify({'status': 200, 'credits': 50000})
 
 
-@app.route('/stats/<teamID>')
+@app.route('/stats/<teamID>', methods=['POST'])
 def getStats(teamID):
     if not validateteamID(teamID):
         return jsonify({'status': 404})
-    return jsonify({'status': 200, 'health': '-50%', 'damage': '100%', 'speed': '+100%'})
+    return jsonify({'status': 200, 'health': '+50%', 'damage': '100%', 'speed': '-100%'})
 
 
-@app.route('/ships/<teamID>')
+@app.route('/ships/<teamID>', methods=['POST'])
 def getShips(teamID):
     if not validateteamID(teamID):
         return jsonify({'status': 404})

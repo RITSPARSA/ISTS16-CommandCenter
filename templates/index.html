@@ -117,7 +117,7 @@
                                     </div>
                                     <div class="col-xs-8 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="400">
                                         <div class="text-uppercase font-w600 text-white-op">GUARDIANS</div>
-                                        <div class="font-s36 font-w300">{{ship1_count}}</div>
+                                        <div id="ship1_count" class="font-s36 font-w300"></div>
                                     </div>
                                 </div>
                                 <div class="row items-push overflow-hidden">
@@ -128,7 +128,7 @@
                                     </div>
                                     <div class="col-xs-8 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="500">
                                         <div class="text-uppercase font-w600 text-white-op">BOMBERS</div>
-                                        <div class="font-s36 font-w300">{{ship2_count}}</div>
+                                        <div id="ship2_count" class="font-s36 font-w300"></div>
                                     </div>
                                 </div>
                                 <div class="row items-push overflow-hidden">
@@ -139,7 +139,7 @@
                                     </div>
                                     <div class="col-xs-8 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="600">
                                         <div class="text-uppercase font-w600 text-white-op">STRIKER</div>
-                                        <div class="font-s36 font-w300">{{ship3_count}}</div>
+                                        <div id="ship3_count" class="font-s36 font-w300"></div>
                                     </div>
                                 </div>
                             </div>
@@ -243,33 +243,15 @@
                                 <div class="row items-push">
                                     <div class="col-xs-4 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="100">
                                         <div class="font-s12 text-white-op">DAMAGE</div>
-                                        {% if damage_color == 'green' %}
-                                            <div class="font-s18 text-ON">{{damage}}</div>
-                                        {% elif damage_color == 'red' %}
-                                            <div class="font-s18 text-OFF">{{damage}}</div>
-                                        {% else %}
-                                            <div class="font-s18 text-white">{{damage}}</div>
-                                        {% endif %}
+                                        <div id="damage"></div>
                                     </div>
                                     <div class="col-xs-4 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="300">
                                         <div class="font-s12 text-white-op">HEALTH</div>
-                                        {% if health_color == 'green' %}
-                                            <div class="font-s18 text-ON">{{health}}</div>
-                                        {% elif health_color == 'red' %}
-                                            <div class="font-s18 text-OFF">{{health}}</div>
-                                        {% else %}
-                                            <div class="font-s18 text-white">{{health}}</div>
-                                        {% endif %}
+                                        <div id="health"></div>
                                     </div>
                                     <div class="col-xs-4 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="500">
                                         <div class="font-s12 text-white-op">SPEED</div>
-                                        {% if speed_color == 'green' %}
-                                            <div class="font-s18 text-ON">{{speed}}</div>
-                                        {% elif speed_color == 'red' %}
-                                            <div class="font-s18 text-OFF">{{speed}}</div>
-                                        {% else %}
-                                            <div class="font-s18 text-white">{{speed}}</div>
-                                        {% endif %}
+                                        <div id="speed"></div>
                                     </div>
                                 </div>
                             </div>
@@ -357,24 +339,111 @@
             reload_koth()
             });
 
-            $(function() {
-           function reload_credits(){
-               $.ajax({
-                    url: 'http://lilbite.org:7000/credits/1',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data){
-                        var credits = data.credits;
 
-                        $('#credits').html(credits);
+
+
+           $(function() {
+           function reload_credits(){
+                $.ajax({
+                  url: 'http://lilbite.org:7000/credits/1',
+                  type: 'POST',
+                  data:{
+                    token: document.cookie
+                  },
+                  contentType: 'application/x-www-form-urlencoded',
+                  success: function (data, textStatus, xhr) {
+                    $('#credits').html(data.credits);
+                  },
+                  error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                  }
+                });
+            }
+            setInterval(reload_credits, 30000);
+            reload_credits()
+            });
+
+            $(function() {
+           function reload_ships(){
+               $.ajax({
+                    url: '/ships/1',
+                    type: 'POST',
+                    dataType: 'json',
+                    data:{
+                      token: document.cookie
+                    },
+                    contentType: 'application/json',
+                    success: function(data){
+                        var ships1 = data.ship1_count;
+                        var ships2 = data.ship2_count;
+                        var ships3 = data.ship3_count;
+
+                        $('#ship1_count').html(ships1);
+                        $('#ship2_count').html(ships2);
+                        $('#ship3_count').html(ships3);
                     },
                     error: function(){
                         //alert("Credits Error!");
                     }
                 });
             }
-            setInterval(reload_credits, 30000);
-            reload_credits()
+            setInterval(reload_ships, 30000);
+            reload_ships()
+            });
+
+            $(function() {
+           function reload_stats(){
+               $.ajax({
+                    url: '/stats/1',
+                    type: 'POST',
+                    dataType: 'json',
+                    data:{
+                      token: document.cookie
+                    },
+                    contentType: 'application/json',
+                    success: function(data){
+                        var health = data.health;
+                        if (health[0]=='-'){
+                            health = '<div id="health" class="font-s18 text-OFF">'+health+'</div>';
+                        }
+                        else if (health[0]=='+'){
+                            health = '<div id="health" class="font-s18 text-ON">'+health+'</div>';
+                        }
+                        else{
+                            health = '<div id="health" class="font-s18 text-white">'+health+'</div>';
+                        }
+                        var damage = data.damage;
+                        if (damage[0]=='-'){
+                            damage = '<div id="damage" class="font-s18 text-OFF">'+damage+'</div>';
+                        }
+                        else if (damage[0]=='+'){
+                            damage = '<div id="damage" class="font-s18 text-ON">'+damage+'</div>';
+                        }
+                        else{
+                            damage = '<div id="damage" class="font-s18 text-white">'+damage+'</div>';
+                        }
+                        var speed = data.speed;
+                        if (speed[0]=='-'){
+                            speed = '<div id="speed" class="font-s18 text-OFF">'+speed+'</div>';
+                        }
+                        else if (speed[0]=='+'){
+                            speed = '<div id="speed" class="font-s18 text-ON">'+speed+'</div>';
+                        }
+                        else{
+                            speed = '<div id="speed" class="font-s18 text-white">'+speed+'</div>';
+                        }
+
+                        $('#health').html(health);
+                        $('#damage').html(damage);
+                        $('#speed').html(speed);
+                    },
+                    error: function(){
+                        //alert("Credits Error!");
+                    }
+                });
+            }
+            setInterval(reload_stats, 30000);
+            reload_stats()
             });
 
 

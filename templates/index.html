@@ -187,9 +187,7 @@
                         <div class="block">
                             <div class="block-header overflow-hidden">
                                 <h2 class="block-title visibility-hidden" data-toggle="appear" data-class="animated fadeInDown">ALERTS</h2>
-                                {% for alert in whiteteam_alerts %}
                                 <div id='alerts' class="text-uppercase font-w600 text-white-op"></div>
-                                {% endfor %}
                             </div>
                         </div>
                         <!-- END ALERTS -->
@@ -231,7 +229,7 @@
                                 <h2 class="block-title visibility-hidden" data-toggle="appear" data-class="animated fadeInDown">CREDITS</h2>
                             </div>
                             <div class="block-content block-content-full overflow-hidden">
-                                <div class="font-w600 text-white-op push-5 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="100">{{credits}}</div>
+                                <div id="credits" class="font-w600 text-white-op push-5 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="100"></div>
                             </div>
                         </div>
                         <!-- END CREDITS -->
@@ -357,6 +355,26 @@
             }
             setInterval(reload_koth, 30000);
             reload_koth()
+            });
+
+            $(function() {
+           function reload_credits(){
+               $.ajax({
+                    url: 'http://lilbite.org:7000/credits/1',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        var credits = data.credits;
+
+                        $('#credits').html(credits);
+                    },
+                    error: function(){
+                        //alert("Credits Error!");
+                    }
+                });
+            }
+            setInterval(reload_credits, 30000);
+            reload_credits()
             });
 
 

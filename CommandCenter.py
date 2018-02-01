@@ -1,55 +1,107 @@
-from flask import Flask, render_template, request, jsonify, redirect
+from flask import Flask, render_template, request, jsonify, redirect, session, flash, make_response
 import os
 import json
 import requests
 
 app = Flask(__name__)
 
+AUTH_API_URL = 'http://lilbite.org:9000'
+
+def validate_session(token):
+    """
+    Sends token to auth server to validate, should recieve
+    associated team number if it is valid
+
+    :param token: the session token to validate
+
+    :return team_id: the id of the team the token is attached to
+    """
+    post_data = dict()
+    post_data['token'] = token
+    resp = requests.post("{}/validate-session".format(AUTH_API_URL, data=post_data))
+    if resp.status_code != 200:
+        raise Exception("Bad status code")
+
+    if 'success' not in resp.json():
+        raise Exception(resp.json()['error'])
+
+    team_id = resp['success']
+    return team_id
 
 @app.route('/')
-def index():
-    # Ship Data
-    ship_data = getShips(1).data
-    ship_json = json.loads(ship_data.decode('utf8').replace("'", '"'))
-    ship1_count = ship_json['ship1_count']
-    ship2_count = ship_json['ship2_count']
-    ship3_count = ship_json['ship3_count']
+def home():
+    if session.get('token'):
+        token = session.get('token')
+        try:
+            validate_session(token)
+        except:
+            redirect('/login')
 
-    # Credit Data
-    credit_data = getCredits(1).data
-    credit_json = json.loads(credit_data.decode('utf8').replace("'", '"'))
-    credits = credit_json['credits']
+        # Ship Data
+        ship_data = getShips(1).data
+        ship_json = json.loads(ship_data.decode('utf8').replace("'", '"'))
+        ship1_count = ship_json['ship1_count']
+        ship2_count = ship_json['ship2_count']
+        ship3_count = ship_json['ship3_count']
 
-    # Stats Data
-    stats_data = getStats(1).data
-    stats_json = json.loads(stats_data.decode('utf8').replace("'", '"'))
-    damage = stats_json['damage']
-    damage_color = 'white'
-    if damage[0] == '+':
-        damage_color = 'green'
-    elif damage[0] == '-':
-        damage_color = 'red'
-    health = stats_json['health']
-    health_color = 'white'
-    if health[0] == '+':
-        health_color = 'green'
-    elif health[0] == '-':
-        health_color = 'red'
-    speed = stats_json['speed']
-    speed_color = 'white'
-    if speed[0] == '+':
-        speed_color = 'green'
-    elif speed[0] == '-':
-        speed_color = 'red'
+        # Credit Data
+        credit_data = getCredits(1).data
+        credit_json = json.loads(credit_data.decode('utf8').replace("'", '"'))
+        credits = credit_json['credits']
 
-    return render_template('index.html', ship1_count=ship1_count, ship2_count=ship2_count, ship3_count=ship3_count,
-                           credits=credits, damage=damage, health=health, speed=speed, damage_color=damage_color,
-                           health_color=health_color, speed_color=speed_color)
+        # Stats Data
+        stats_data = getStats(1).data
+        stats_json = json.loads(stats_data.decode('utf8').replace("'", '"'))
+        damage = stats_json['damage']
+        damage_color = 'white'
+        if damage[0] == '+':
+            damage_color = 'green'
+        elif damage[0] == '-':
+            damage_color = 'red'
+        health = stats_json['health']
+        health_color = 'white'
+        if health[0] == '+':
+            health_color = 'green'
+        elif health[0] == '-':
+            health_color = 'red'
+        speed = stats_json['speed']
+        speed_color = 'white'
+        if speed[0] == '+':
+            speed_color = 'green'
+        elif speed[0] == '-':
+            speed_color = 'red'
+
+        return render_template('index.html', ship1_count=ship1_count, ship2_count=ship2_count, ship3_count=ship3_count,
+                               credits=credits, damage=damage, health=health, speed=speed, damage_color=damage_color,
+                               health_color=health_color, speed_color=speed_color)
+    else:
+        return render_template('login.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=['POST'])
 def login():
-    return render_template('login.html')
+    password = request.form['password']
+    username = request.form['username']
+    data = {'username': username, 'password': password}
+    url = 'http://lilbite.org:9000/login'
+    r = requests.post(url, data)
+    if r.status_code != 200:
+        # error
+        pass
+    elif 'error' in r.json():
+        # error
+        pass
+    else:
+        token = r.json()['token']
+        team_id = r.json()['team_id']
+        session['token'] = token
+        session['team_id'] = team_id
+        response = make_response(redirect('/'))
+        response.set_cookie('token', token)
+        return response
+    #print(r.json())
+
+    return home()
 
 
 """
@@ -130,4 +182,5 @@ def validateteamID(team_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = os.urandom(12)
     app.run(debug=True)

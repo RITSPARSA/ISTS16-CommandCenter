@@ -34,7 +34,7 @@
                     <div class="text-success animated infinite pulse pull-right">[LIVE]</div>
                 </div>
                 <h1 class="h3 font-w200">
-                    <span class="text-crystal">//</span> <a class="link-sf font-w300" href="index.html">ISTS Command Center</a>
+                    <span class="text-crystal">//</span> <a class="link-sf font-w300" href="index.html"> Command Center</a>
                 </h1>
             </header>
             <!-- END Header -->
@@ -74,7 +74,33 @@
                             </div>
                             <span class="circle circles-main-content visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="100">
                                 <!-- <span data-toggle="countTo" data-to="16540" data-speed="60000"></span><br> -->
-                                <span class="text-crystal">LOGIN</span>
+                                <span class="text-crystal">LOGIN
+                                    {% block body %}
+                                    {% if session['logged_in'] %}
+                                    <p>You're logged in already!</p>
+                                    {% else %}
+                                    <form action="/login" method="POST">
+                                      <input size="35"
+                                       style="background-color:black;
+                                              border: solid 1px #6E6E6E;
+                                              height: 30px;
+                                              font-size:18px;
+                                              vertical-align:9px"
+                                             type="username" name="username" placeholder="Username">
+                                      <input size="35"
+                                       style="background-color:black;
+                                              border: solid 1px #6E6E6E;
+                                              height: 30px;
+                                              font-size:18px;
+                                              vertical-align:9px"
+                                              type="password" name="password" placeholder="Password">
+                                      <input style="background-color:black;
+                                              border: solid 1px #6E6E6E;
+                                              vertical-align:9px"
+                                             type="submit" value="Log in">
+                                    </form>
+                                    {% endif %}
+                                    {% endblock %}</span>
                             </span>
                         </div>
                     </div>

@@ -29,7 +29,7 @@
             <!-- Header -->
             <header id="page-header">
                 <div class="h3 text-right pull-right hidden-xs">
-                    <div class="text-crystal font-w300">TEAM[]_LOGGED_IN</div>
+                    <div class="text-crystal font-w300">TEAM{{team_id}}_LOGGED_IN</div>
                     <div class="text-success animated infinite pulse pull-right">[LIVE]</div>
                 </div>
                 <h1 class="h3 font-w200">
@@ -79,22 +79,22 @@
                         <div class="row">
                             <form action="/ansible_playbook1" method="post">
                                 <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeInLeft" data-timeout="100">
-                                    <button name="playbook1" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook1</button>
+                                    <button name="ansible_command" value="" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook1</button>
                                 </div>
                             </form>
                             <form action="/ansible_playbook2" method="post">
                                 <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeInLeft" data-timeout="100">
-                                    <button name="playbook2" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook2</button>
+                                    <button name="ansible_command" value="" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook2</button>
                                 </div>
                             </form>
                             <form action="/ansible_playbook3" method="post">
                                 <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeInLeft" data-timeout="100">
-                                    <button name="playbook3" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook3</button>
+                                    <button name="ansible_command" value="" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook3</button>
                                 </div>
                             </form>
                             <form action="/ansible_playbook4" method="post">
                                 <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeInLeft" data-timeout="100">
-                                    <button name="playbook4" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook4</button>
+                                    <button name="ansible_command" value="" type="submit" class="btn btn-xl btn-block btn-sf push-10">Ansible_Playbook4</button>
                                 </div>
                             </form>
                         </div>
@@ -200,22 +200,22 @@
                             <div class="block-content overflow-hidden">
                                 <div class="row items-push">
                                     <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="300">
-                                        <div class="font-s24 font-w300 text-white-op">SERVER1 [<span class="text-success">UP</span>]</div>
+                                        <div id="server1" class="font-s24 font-w300 text-white-op"></div>
                                     </div>
                                     <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="500">
-                                        <div class="font-s24 font-w300 text-white-op">SERVER2 [<span class="text-success">UP</span>]</div>
+                                        <div id="server2" class="font-s24 font-w300 text-white-op"></div>
                                     </div>
                                     <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="700">
-                                        <div class="font-s24 font-w300 text-white-op">SERVER3 [<span class="text-success">UP</span>]</div>
+                                        <div id="server3" class="font-s24 font-w300 text-white-op"></div>
                                     </div>
                                     <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="900">
-                                        <div class="font-s24 font-w300 text-white-op">SERVER4 [<span class="text-success">UP</span>]</div>
+                                        <div id="server4" class="font-s24 font-w300 text-white-op"></div>
                                     </div>
                                     <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="1100">
-                                        <div class="font-s24 font-w300 text-white-op">SERVER5 [<span class="text-success">UP</span>]</div>
+                                        <div id="server5" class="font-s24 font-w300 text-white-op"></div>
                                     </div>
                                     <div class="col-xs-6 visibility-hidden" data-toggle="appear" data-class="animated fadeIn" data-timeout="1300">
-                                        <div class="font-s24 font-w300 text-white-op">SERVER6 [<span class="text-success">UP</span>]</div>
+                                        <div id="server6" class="font-s24 font-w300 text-white-op"></div>
                                     </div>
                                 </div>
                             </div>
@@ -229,7 +229,7 @@
                                 <h2 class="block-title visibility-hidden" data-toggle="appear" data-class="animated fadeInDown">CREDITS</h2>
                             </div>
                             <div class="block-content block-content-full overflow-hidden">
-                                <div id="credits" class="font-w600 text-white-op push-5 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="100"></div>
+                                <div id="credits" class="font-w700 text-white-op push-5 visibility-hidden" data-toggle="appear" data-class="animated fadeInRight" data-timeout="100"></div>
                             </div>
                         </div>
                         <!-- END CREDITS -->
@@ -282,11 +282,32 @@
                 Ares.initHelpers(['appear', 'appear-countTo', 'easy-pie-chart']);
             });
 
+           var AUTH_API_URL = 'http://lilbite.org:9000';
+           var WHITETEAM_API_URL = 'http://lilbite.org:7000';
+           var team_id = '';
+
+           function get_team_id(){
+                $.ajax({
+                  url: AUTH_API_URL + '/validate-session',
+                  type: 'POST',
+                  data:{
+                    token: document.cookie
+                  },
+                  contentType: 'application/x-www-form-urlencoded',
+                  success: function (data) {
+                    alert(data);
+                  },
+                  error: function (data) {
+                    alert('team_id error');
+                  }
+                });
+            };
+            get_team_id();
 
            $(function() {
            function reload_alerts(){
                $.ajax({
-                    url: '/status/alerts',
+                    url: WHITETEAM_API_URL + '/status/alerts',
                     type: 'GET',
                     dataType: 'json',
                     success: function(data){
@@ -299,7 +320,7 @@
 
                     },
                     error: function(){
-                        alert("Error!");
+                        console.log("Alerts Error!");
                     }
                 });
             }
@@ -310,28 +331,24 @@
             $(function() {
            function reload_koth(){
                $.ajax({
-                    url: '/status/koth',
+                    url: WHITETEAM_API_URL + '/status/koth',
                     type: 'GET',
                     dataType: 'json',
                     success: function(data){
                         var planets = data.planets;
-                        //alert(planets.planet1);
-                        var names_list = [];
-                        var control_list = [];
-                        for (var key in planets) {
-                          if (planets.hasOwnProperty(key)) {
-                            var val = planets[key];
-                            names_list.push(key);
-                            control_list.push(val);
-                          }
-                        }
-                        $('#planet1_name').html(names_list[0]);
-                        $('#planet1_control').html(control_list[0]);
-                        $('#planet2_name').html(names_list[1]);
-                        $('#planet2_control').html(control_list[1]);
+                        var planet1_data = planets[0];
+                        var planet1_name = planet1_data['planet'];
+                        var planet1_owner = planet1_data['owner'];
+                        var planet2_data = planets[1];
+                        var planet2_name = planet2_data['planet'];
+                        var planet2_owner = planet2_data['owner'];
+                        $('#planet1_name').html(planet1_name);
+                        $('#planet1_control').html(planet1_owner);
+                        $('#planet2_name').html(planet2_name);
+                        $('#planet2_control').html(planet2_owner);
                     },
                     error: function(){
-                        alert("Error!");
+                        console.log("Koth Error!");
                     }
                 });
             }
@@ -340,22 +357,21 @@
             });
 
 
-
-
            $(function() {
            function reload_credits(){
                 $.ajax({
-                  url: 'http://lilbite.org:7000/credits/1',
+                  url: WHITETEAM_API_URL + '/credits/' + team_id,
                   type: 'POST',
                   data:{
                     token: document.cookie
                   },
                   contentType: 'application/x-www-form-urlencoded',
                   success: function (data, textStatus, xhr) {
-                    $('#credits').html(data.credits);
+                    var credits = "<font size='6'>" + "☬" + data.credits + "</font>";
+                    $('#credits').html(credits);
                   },
                   error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
+                    console.log('Credits Error');
                   }
                 });
             }
@@ -366,24 +382,24 @@
             $(function() {
            function reload_ships(){
                $.ajax({
-                    url: '/ships/1',
+                    url: WHITETEAM_API_URL + '/ships/' + team_id,
                     type: 'POST',
                     dataType: 'json',
                     data:{
                       token: document.cookie
                     },
-                    contentType: 'application/json',
+                    contentType: 'application/x-www-form-urlencoded',
                     success: function(data){
-                        var ships1 = data.ship1_count;
-                        var ships2 = data.ship2_count;
-                        var ships3 = data.ship3_count;
+                        var ships1 = data.guardian;
+                        var ships2 = data.bomber;
+                        var ships3 = data.striker;
 
                         $('#ship1_count').html(ships1);
                         $('#ship2_count').html(ships2);
                         $('#ship3_count').html(ships3);
                     },
                     error: function(){
-                        //alert("Credits Error!");
+                        console.log("Ships Error!");
                     }
                 });
             }
@@ -394,13 +410,13 @@
             $(function() {
            function reload_stats(){
                $.ajax({
-                    url: '/stats/1',
+                    url: WHITETEAM_API_URL + '/stats/' + team_id,
                     type: 'POST',
                     dataType: 'json',
                     data:{
                       token: document.cookie
                     },
-                    contentType: 'application/json',
+                    contentType: 'application/x-www-form-urlencoded',
                     success: function(data){
                         var health = data.health;
                         if (health[0]=='-'){
@@ -438,7 +454,7 @@
                         $('#speed').html(speed);
                     },
                     error: function(){
-                        //alert("Credits Error!");
+                        console.log("Stats Error!");
                     }
                 });
             }
@@ -446,6 +462,66 @@
             reload_stats()
             });
 
+            $(function() {
+           function reload_credits(){
+                $.ajax({
+                  url: '/hq_coms',
+                  type: 'POST',
+                  data:{
+                    server1: '8.8.8.8',
+                    server2: 'google.com',
+                    server3: 'Vega',
+                    server4: 'Sirius',
+                    server5: 'Tauri',
+                    server6: 'localhost'
+                  },
+                  contentType: 'application/x-www-form-urlencoded',
+                  success: function (data, textStatus, xhr) {
+                    if (data.reachable1[1] == 'UP') {
+                        var server1 = data.reachable1[0]+' [<span class="text-success">' + data.reachable1[1] + '</span>]';
+                    } else {
+                        var server1 = data.reachable1[0]+' [<span class="text-OFF">' + data.reachable1[1] + '</span>]';
+                    }
+                    if (data.reachable2[1] == 'UP') {
+                        var server2 = data.reachable2[0]+' [<span class="text-success">' + data.reachable2[1] + '</span>]';
+                    } else {
+                        var server2 = data.reachable2[0]+' [<span class="text-OFF">' + data.reachable2[1] + '</span>]';
+                    }
+                    if (data.reachable3[1] == 'UP') {
+                        var server3 = data.reachable3[0]+' [<span class="text-success">' + data.reachable3[1] + '</span>]';
+                    } else {
+                        var server3 = data.reachable3[0]+' [<span class="text-OFF">' + data.reachable3[1] + '</span>]';
+                    }
+                    if (data.reachable4[1] == 'UP') {
+                        var server4 = data.reachable4[0]+' [<span class="text-success">' + data.reachable4[1] + '</span>]';
+                    } else {
+                        var server4 = data.reachable4[0]+' [<span class="text-OFF">' + data.reachable4[1] + '</span>]';
+                    }
+                    if (data.reachable5[1] == 'UP') {
+                        var server5 = data.reachable5[0]+' [<span class="text-success">' + data.reachable5[1] + '</span>]';
+                    } else {
+                        var server5 = data.reachable5[0]+' [<span class="text-OFF">' + data.reachable5[1] + '</span>]';
+                    }
+                    if (data.reachable6[1] == 'UP') {
+                        var server6 = data.reachable6[0]+' [<span class="text-success">' + data.reachable6[1] + '</span>]';
+                    } else {
+                        var server6 = data.reachable6[0]+' [<span class="text-OFF">' + data.reachable6[1] + '</span>]';
+                    }
+                    $('#server1').html(server1);
+                    $('#server2').html(server2);
+                    $('#server3').html(server3);
+                    $('#server4').html(server4);
+                    $('#server5').html(server5);
+                    $('#server6').html(server6);
+                  },
+                  error: function (xhr, textStatus, errorThrown) {
+                    console.log('Credits Error');
+                  }
+                });
+            }
+            setInterval(reload_credits, 30000);
+            reload_credits()
+            });
 
         </script>
 

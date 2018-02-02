@@ -1,4 +1,3 @@
-#!/usr/bin/python
 from flask import Flask, render_template, request, jsonify, redirect, session, flash, make_response
 import os
 import json

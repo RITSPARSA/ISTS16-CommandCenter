@@ -5,8 +5,9 @@ import json
 import requests
 
 app = Flask(__name__)
+app.secret_key = "bulkingseason"
 
-AUTH_API_URL = 'http://lilbite.org:9000'
+AUTH_API_URL = 'http://atlas.whiteteam.ritsec:9000'
 
 def validate_session(token):
     """

@@ -71,9 +71,8 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
     data = {'token': session['token']}
-    r = requests.post("{}/expire-session".format(AUTH_API_URL), data=data)
-    if r.json()['success']:
-        session.clear()
+    requests.post("{}/expire-session".format(AUTH_API_URL), data=data)
+    session.clear()
     return redirect('/')
 
 

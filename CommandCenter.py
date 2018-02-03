@@ -108,27 +108,27 @@ def hq_coms():
 """
 @app.route('/ansible_playbook1', methods=['POST'])
 def ansible_playbook1():
-    command = request.form['ansible_command']
+    command = "ansible-playbook /var/www/ISTS16-ansible/predeploy.yml -t jenkins -i /var/www/ISTS16-ansible/hosts"
     os.system(command)
     return redirect('/')
 
 
 @app.route('/ansible_playbook2', methods=['POST'])
 def ansible_playbook2():
-    command = request.form['ansible_command']
+    command = "ansible-playbook /var/www/ISTS16-ansible/predeploy.yml -t ecommerce -i /var/www/ISTS16-ansible/hosts"
     os.system(command)
     return redirect('/')
 
 
 @app.route('/ansible_playbook3', methods=['POST'])
 def ansible_playbook3():
-    command = request.form['ansible_command']
+    command = "ansible-playbook /var/www/ISTS16-ansible/predeploy.yml -t mail -i /var/www/ISTS16-ansible/hosts"
     os.system(command)
     return redirect('/')
 
 @app.route('/ansible_playbook4', methods=['POST'])
 def ansible_playbook4():
-    command = request.form['ansible_command']
+    command = "ansible-playbook /var/www/ISTS16-ansible/predeploy.yml -t jenkinswin -i /var/www/ISTS16-ansible/hosts"
     os.system(command)
     return redirect('/')
 

@@ -137,6 +137,9 @@ def ansible_playbook4():
         Helpers
 """
 def ping(host):
+    if host.lower() == "luna":
+        host = "localhost"
+
     response = os.system("ping -c 1 -W 1 " + host)
     if response == 0:
         return 'UP'

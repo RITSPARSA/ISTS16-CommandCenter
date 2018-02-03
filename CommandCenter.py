@@ -138,7 +138,7 @@ def ansible_playbook4():
         Helpers
 """
 def ping(host):
-    response = os.system("ping -n 1 -W 1 " + host)
+    response = os.system("ping -c 1 -W 1 " + host)
     if response == 0:
         return 'UP'
     else:

@@ -318,6 +318,7 @@
                     reload_credits();
                     reload_ships();
                     reload_stats();
+                    reload_hq_coms();
                   },
                   error: function (data) {
                     console.log('team_id error');
@@ -481,8 +482,8 @@
             setInterval(reload_stats, 30000);
 
 
-            $(function() {
-           function reload_koth(){
+
+           function reload_hq_coms(){
                 $.ajax({
                   url: '/hq_coms',
                   type: 'POST',
@@ -562,13 +563,12 @@
                     $('#server10').html(server10);
                   },
                   error: function (xhr, textStatus, errorThrown) {
-                    console.log('Koth Error');
+                    console.log('HQ Coms Error');
                   }
                 });
-            }
-            setInterval(reload_koth, 30000);
-            reload_koth()
-            });
+            };
+            setInterval(reload_hq_coms, 30000);
+
 
         </script>
 
